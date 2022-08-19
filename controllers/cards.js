@@ -36,7 +36,7 @@ module.exports.deleteCard = (req, res) => Card.findByIdAndRemove(req.params.card
     if (!req.user._id) {
       return res.status(BAD_REQUEST).send({ message: `"Это не ваш пост, его удалить нельзя" ${error}` });
     }
-    res.status(STATUS_OK).send({ data: card })
+    res.status(STATUS_OK).send({ data: card });
   })
   .catch((error) => {
     if (error.name === 'NotFound') {
