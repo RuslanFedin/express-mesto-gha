@@ -3,14 +3,16 @@ const mongoose = require('mongoose');
 const usersRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const NOT_FOUND = require('./errors/statusCodes');
+const bodyParser = require('body-parser');
 
 const { PORT = 3000 } = process.env;
 const app = express();
+app.use(bodyParser.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
+  useNewUrlParser: true,
 });
 
-app.use(express.json());
 app.use((req, res, next) => {
   req.user = {
     _id: '62fd4e45a87ad36496bd45c7',
