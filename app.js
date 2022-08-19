@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 });
 app.use('/', cardRouter);
 app.use('*', (req, res) => {
-  res.status(NOT_FOUND).send({ message: `Страница не найдена ${error}` });
+  res.status(NOT_FOUND).send({ message: 'Страница не найдена' });
 });
 
 app.listen(PORT, () => {
