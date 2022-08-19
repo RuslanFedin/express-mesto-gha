@@ -56,7 +56,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   .orFail(() => {
     throw new NotFound();
   })
-  .then((card) => res.status(HAS_BEEN_CREATED).send({ data: card }))
+  .then((card) => res.status(STATUS_OK).send({ data: card }))
   .catch((error) => {
     if (error.name === 'NotFound') {
       res.status(NOT_FOUND).send({ message: `Пост не найден ${error}` });
@@ -75,7 +75,7 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   .orFail(() => {
     throw new NotFound();
   })
-  .then((card) => res.status(HAS_BEEN_CREATED).send({ data: card }))
+  .then((card) => res.status(STATUS_OK).send({ data: card }))
   .catch((error) => {
     if (error.name === 'NotFound') {
       res.status(NOT_FOUND).send({ message: `Пост не найден ${error}` });
