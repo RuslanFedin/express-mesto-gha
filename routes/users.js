@@ -4,7 +4,7 @@ const {
   getUser,
   getUsers,
   updateUser,
-  updateAvatar
+  updateAvatar,
 } = require('../controllers/users');
 
 router.post('/users', createUser);

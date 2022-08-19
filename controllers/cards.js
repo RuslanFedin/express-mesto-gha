@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const UserNotFoud = require('../errors/NotFound');
+const NotFound = require('../errors/NotFound');
 const {
   STATUS_OK,
   HAS_BEEN_CREATED,
@@ -29,7 +29,7 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => Card.findByIdAndRemove(req.params.cardId)
   .orFail(() => {
-    throw new UserNotFoud();
+    throw new NotFound();
   })
   .then((card) => res.status(STATUS_OK).send({ data: card }))
   .catch((error) => {
@@ -48,7 +48,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .orFail(() => {
-    throw new NotFoud();
+    throw new NotFound();
   })
   .then((card) => res.status(HAS_BEEN_CREATED).send({ data: card }))
   .catch((error) => {
@@ -67,7 +67,7 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .orFail(() => {
-    throw new NotFoud();
+    throw new NotFound();
   })
   .then((card) => res.status(HAS_BEEN_CREATED).send({ data: card }))
   .catch((error) => {
