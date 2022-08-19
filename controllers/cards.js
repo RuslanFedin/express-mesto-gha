@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const Card = require('../models/card');
 const NotFound = require('../errors/NotFound');
 const {
@@ -16,7 +17,7 @@ module.exports.getCards = (req, res) => Card.find({})
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  Card.create({ name, link, owner: req.owner._id })
+  Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(HAS_BEEN_CREATED).send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
@@ -31,7 +32,12 @@ module.exports.deleteCard = (req, res) => Card.findByIdAndRemove(req.params.card
   .orFail(() => {
     throw new NotFound();
   })
-  .then((card) => res.status(STATUS_OK).send({ data: card }))
+  .then((card) => {
+    if (!req.user._id) {
+      return res.status(BAD_REQUEST).send({ message: `"Это не ваш пост, его удалить нельзя" ${error}` });
+    }
+    res.status(STATUS_OK).send({ data: card })
+  })
   .catch((error) => {
     if (error.name === 'NotFound') {
       res.status(NOT_FOUND).send({ message: `Пост не найден ${error}` });

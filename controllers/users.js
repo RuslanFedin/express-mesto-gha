@@ -59,7 +59,7 @@ module.exports.updateUser = (req, res) => {
     .orFail(() => {
       throw new NotFound();
     })
-    .then((user) => res.status(HAS_BEEN_CREATED).send({ user }))
+    .then((user) => res.status(STATUS_OK).send({ user }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: `Введены некорректные данные ${error}` });
@@ -85,7 +85,7 @@ module.exports.updateAvatar = (req, res) => {
     .orFail(() => {
       throw new NotFound();
     })
-    .then((user) => res.status(HAS_BEEN_CREATED).send({ user }))
+    .then((user) => res.status(STATUS_OK).send({ user }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: `Введены некорректные данные ${error}` });
