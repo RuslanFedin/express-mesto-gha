@@ -1,9 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const usersRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const NOT_FOUND = require('./errors/statusCodes');
-const bodyParser = require('body-parser');
 
 const { PORT = 3000 } = process.env;
 const app = express();
