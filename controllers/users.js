@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const NotFoud = require('../errors/NotFound');
+const NotFound = require('../errors/NotFound');
 const {
   STATUS_OK,
   HAS_BEEN_CREATED,
@@ -23,7 +23,7 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getUser = (req, res) => User.findById(req.params.userId)
   .orFail(() => {
-    throw new NotFoud();
+    throw new NotFound();
   })
   .then((user) => res.status(STATUS_OK).send({ user }))
   .catch((error) => {
@@ -57,7 +57,7 @@ module.exports.updateUser = (req, res) => {
     },
   )
     .orFail(() => {
-      throw new NotFoud();
+      throw new NotFound();
     })
     .then((user) => res.status(HAS_BEEN_CREATED).send({ user }))
     .catch((error) => {
@@ -83,7 +83,7 @@ module.exports.updateAvatar = (req, res) => {
     },
   )
     .orFail(() => {
-      throw new NotFoud();
+      throw new NotFound();
     })
     .then((user) => res.status(HAS_BEEN_CREATED).send({ user }))
     .catch((error) => {
