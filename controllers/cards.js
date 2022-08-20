@@ -10,7 +10,7 @@ const {
 } = require('../errors/statusCodes');
 
 module.exports.getCards = (req, res) => Card.find({})
-  .then((card) => res.status(STATUS_OK).send({ data: card }))
+  .then((cards) => res.status(STATUS_OK).send({ cards }))
   .catch((error) => {
     res.status(INTERNAL_SERVER_ERROR).send({ message: `Возникла ошибка на сервере ${error}` });
   });
@@ -18,7 +18,7 @@ module.exports.getCards = (req, res) => Card.find({})
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(HAS_BEEN_CREATED).send({ data: card }))
+    .then((card) => res.status(HAS_BEEN_CREATED).send({ card }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: `Введены некорректные данные ${error}` });
