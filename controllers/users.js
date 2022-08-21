@@ -52,7 +52,6 @@ module.exports.updateUser = (req, res) => {
     {
       new: true,
       runValidators: true,
-      upsert: false,
     },
   )
     .orFail(() => {
