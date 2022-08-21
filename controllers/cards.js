@@ -1,8 +1,6 @@
-/* eslint-disable consistent-return */
 const Card = require('../models/card');
 const NotFound = require('../errors/NotFound');
 const {
-  STATUS_OK,
   HAS_BEEN_CREATED,
   BAD_REQUEST,
   NOT_FOUND,
@@ -10,9 +8,9 @@ const {
 } = require('../errors/statusCodes');
 
 module.exports.getCards = (req, res) => Card.find({})
-  .then((cards) => res.status(STATUS_OK).send({ cards }))
+  .then((cards) => res.send({ cards }))
   .catch((error) => {
-    res.status(INTERNAL_SERVER_ERROR).send({ message: `Возникла ошибка на сервере ${error}` });
+    res.status(INTERNAL_SERVER_ERROR).send({ message: 'Возникла ошибка на сервере' });
   });
 
 module.exports.createCard = (req, res) => {
@@ -21,9 +19,9 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.status(HAS_BEEN_CREATED).send({ card }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: `Введены некорректные данные ${error}` });
+        res.status(BAD_REQUEST).send({ message: 'Введены некорректные данные' });
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: `Возникла ошибка на сервере ${error}` });
+        res.status(INTERNAL_SERVER_ERROR).send({ message: 'Возникла ошибка на сервере' });
       }
     });
 };
@@ -36,15 +34,15 @@ module.exports.deleteCard = (req, res) => Card.findByIdAndRemove(req.params.card
     if (!req.user._id) {
       return res.status(BAD_REQUEST).send({ message: 'Это не ваш пост, его удалить нельзя' });
     }
-    res.status(STATUS_OK).send({ data: card });
+    res.send({ data: card });
   })
   .catch((error) => {
     if (error.name === 'NotFound') {
-      res.status(NOT_FOUND).send({ message: `Пост не найден ${error}` });
+      res.status(NOT_FOUND).send({ message: 'Пост не найден' });
     } else if (error.name === 'CastError') {
-      res.status(BAD_REQUEST).send({ message: `Данные некорректны ${error}` });
+      res.status(BAD_REQUEST).send({ message: 'Данные некорректны' });
     } else {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `Возникла ошибка на сервере ${error}` });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Возникла ошибка на сервере' });
     }
   });
 
@@ -56,14 +54,14 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   .orFail(() => {
     throw new NotFound();
   })
-  .then((card) => res.status(STATUS_OK).send({ data: card }))
+  .then((card) => res.send({ data: card }))
   .catch((error) => {
     if (error.name === 'NotFound') {
-      res.status(NOT_FOUND).send({ message: `Пост не найден ${error}` });
+      res.status(NOT_FOUND).send({ message: 'Пост не найден' });
     } else if (error.name === 'CastError') {
-      res.status(BAD_REQUEST).send({ message: `Данные некорректны ${error}` });
+      res.status(BAD_REQUEST).send({ message: 'Данные некорректны' });
     } else {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `Возникла ошибка на сервере ${error}` });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Возникла ошибка на сервере' });
     }
   });
 
@@ -75,13 +73,13 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   .orFail(() => {
     throw new NotFound();
   })
-  .then((card) => res.status(STATUS_OK).send({ data: card }))
+  .then((card) => res.send({ data: card }))
   .catch((error) => {
     if (error.name === 'NotFound') {
-      res.status(NOT_FOUND).send({ message: `Пост не найден ${error}` });
+      res.status(NOT_FOUND).send({ message: 'Пост не найден' });
     } else if (error.name === 'CastError') {
-      res.status(BAD_REQUEST).send({ message: `Данные некорректны ${error}` });
+      res.status(BAD_REQUEST).send({ message: 'Данные некорректны' });
     } else {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `Возникла ошибка на сервере ${error}` });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Возникла ошибка на сервере' });
     }
   });
