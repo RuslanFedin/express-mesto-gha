@@ -9,7 +9,7 @@ const {
 
 module.exports.getCards = (req, res) => Card.find({})
   .then((cards) => res.send({ cards }))
-  .catch((error) => {
+  .catch(() => {
     res.status(INTERNAL_SERVER_ERROR).send({ message: 'Возникла ошибка на сервере' });
   });
 

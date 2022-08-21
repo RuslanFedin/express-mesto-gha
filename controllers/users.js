@@ -37,7 +37,7 @@ module.exports.getUser = (req, res) => User.findById(req.params.userId)
 
 module.exports.getUsers = (req, res) => User.find({})
   .then((user) => res.send({ user }))
-  .catch((error) => {
+  .catch(() => {
     res.status(INTERNAL_SERVER_ERROR).send({ message: 'Возникла ошибка на сервере' });
   });
 
