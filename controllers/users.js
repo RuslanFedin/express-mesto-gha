@@ -1,5 +1,10 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFound = require('../errors/NotFound');
+const Conflict = require('../errors/Conflict');
+const BadRequest = require('../errors/BadRequest');
+const Unauthorized = require('../errors/Unauthorized');
 const {
   HAS_BEEN_CREATED,
   BAD_REQUEST,
@@ -91,5 +96,51 @@ module.exports.updateAvatar = (req, res) => {
       } else {
         res.status(INTERNAL_SERVER_ERROR).send({ message: 'Возникла ошибка на сервере' });
       }
+    });
+};
+
+module.exports.createUser = (res, req, next) => {
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      name: req.body.name,
+      about: req.body.about,
+      avatar: req.body.avatar,
+      email: req.body.email,
+      password: hash,
+    }))
+    .then((user) => {
+      const userData = {
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      };
+      res.status(HAS_BEEN_CREATED).send(userData);
+    })
+    .catch((error) => {
+      if (error.code === 11000) {
+        next(new Conflict('Такой пользователь уже есть'));
+      } else if (error.name === 'ValidationError') {
+        next(new BadRequest('Введены некорректные данные'));
+      } else {
+        next(error);
+      }
+    });
+};
+
+module.exports.login = (res, req, next) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'super-duper-very-secret-key', { expiresIn: '7d' });
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        maxAge: 604800,
+      });
+      res.send({ token });
+    })
+    .catch((error) => {
+      next(new Unauthorized(error.message));
     });
 };
