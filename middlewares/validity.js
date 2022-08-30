@@ -14,21 +14,21 @@ const signUpValidity = celebrate({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8).max(30),
     name: Joi.string().min(2).max(30),
-    aboout: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
     avatar: Joi.string().regex(urlRegex),
   }),
 });
 
 const getUserValidity = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().length(24).hex(),
+    userId: Joi.string().hex().length(24),
   }),
 });
 
 const updateUserValidiry = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    aboout: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
   }),
 });
 
@@ -47,7 +47,7 @@ const createCardValidity = celebrate({
 
 const idValidity = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24).hex(),
+    cardId: Joi.string().hex().length(24),
   }),
 });
 
