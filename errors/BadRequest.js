@@ -7,4 +7,4 @@ class BadRequest extends Error {
   }
 }
 
-module.exports = NotFound;
+module.exports = { BadRequest };
