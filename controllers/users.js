@@ -101,42 +101,76 @@ module.exports.updateAvatar = (req, res, next) => {
     });
 };
 
+// module.exports.createUser = (req, res, next) => {
+//   const {
+//     email, password, name, about, avatar,
+//   } = req.body;
+//   if (!email || !password) {
+//     throw new BadRequest('Введите логин и пароль');
+//   }
+//   bcrypt.hash(password, 10)
+//     .then((hash) => {
+//       User.create({
+//         email,
+//         password: hash,
+//         name,
+//         about,
+//         avatar,
+//       })
+//         .then((user) => {
+//           res.status(HAS_BEEN_CREATED).send({
+//             email: user.email,
+//             name: user.name,
+//             about: user.about,
+//             avatar: user.avatar,
+//             _id: user._id,
+//           });
+//         })
+//         .catch((error) => {
+//           if (error.code === 11000) {
+//             next(new Conflict('Пользователь уже существует'));
+//           }
+//           if (error.name === 'ValidationError') {
+//             next(new BadRequest('Введены некорректные данные'));
+//           }
+//           next(error);
+//         });
+//     });
+// };
+
 module.exports.createUser = (req, res, next) => {
-  const {
-    email, password, name, about, avatar,
-  } = req.body;
+  const { email, password } = req.body;
+
   if (!email || !password) {
-    throw new BadRequest('Введите логин и пароль');
+    next(new BadRequest('Неправильный логин или пароль.'));
   }
-  bcrypt.hash(password, 10)
-    .then((hash) => {
-      User.create({
-        email,
-        password: hash,
-        name,
-        about,
-        avatar,
-      })
-        .then((user) => {
-          res.status(HAS_BEEN_CREATED).send({
-            user: {
-              email: user.email,
-              name: user.name,
-              about: user.about,
-              avatar: user.avatar,
-              _id: user._id,
-            },
-          });
-        })
-        .catch((error) => {
-          if (error.code === 11000) {
-            next(new Conflict(`Пользователь с ${email} уже существует`));
-          }
-          if (error.name === 'ValidationError') {
-            next(new BadRequest('Введены некорректные данные'));
-          }
-          return next(error);
-        });
+
+  return User.findOne({ email }).then((user) => {
+    if (user) {
+      next(new Conflict(`Пользователь с ${email} уже существует.`));
+    }
+
+    return bcrypt.hash(password, 10);
+  })
+    .then((hash) => User.create({
+      email,
+      password: hash,
+      name: req.body.name,
+      about: req.body.about,
+      avatar: req.body.avatar,
+    }))
+    .then((user) => res.send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      _id: user._id,
+      email: user.email,
+    }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequest('Неверные данные о пользователе или неверная ссылка на аватар.'));
+      }
+      return next(err);
     });
 };
 
