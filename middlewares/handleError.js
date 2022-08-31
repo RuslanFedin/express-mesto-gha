@@ -1,11 +1,13 @@
-const { INTERNAL_SERVER_ERROR } = require('../errors/statusCodes');
+// const { INTERNAL_SERVER_ERROR } = require('../errors/statusCodes');
 
 function handleError(error, req, res, next) {
-  if (error.statusCode) {
-    res.status(error.statusCode).send({ message: error.message });
-  } else {
-    res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
-  }
+  const status = error.statusCode || 500;
+  const message = error.message || 'На сервере произошла ошибка.';
+
+  res.status(status).send({
+    error,
+    message,
+  });
   next();
 }
 

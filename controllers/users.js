@@ -9,6 +9,26 @@ const JWT_KEY = 'super-duper-very-secret-key';
 
 const { HAS_BEEN_CREATED } = require('../errors/statusCodes');
 
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_KEY, { expiresIn: '7d' });
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        maxAge: 604800,
+      });
+      res.send({ token });
+    })
+    .catch(next);
+};
+
+module.exports.getUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => res.send(users))
+    .catch(next);
+};
+
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
@@ -24,12 +44,6 @@ module.exports.getUser = (req, res, next) => {
         next(error);
       }
     });
-};
-
-module.exports.getUsers = (req, res, next) => {
-  User.find({})
-    .then((user) => res.send({ user }))
-    .catch(next);
 };
 
 module.exports.updateUser = (req, res, next) => {
@@ -124,20 +138,6 @@ module.exports.createUser = (req, res, next) => {
           return next(error);
         });
     });
-};
-
-module.exports.login = (req, res, next) => {
-  const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_KEY, { expiresIn: '7d' });
-      res.cookie('jwt', token, {
-        httpOnly: true,
-        maxAge: 604800,
-      });
-      res.send({ token });
-    })
-    .catch(next);
 };
 
 module.exports.getMe = (req, res, next) => {

@@ -7,7 +7,6 @@ const {
 } = require('../middlewares/validity');
 
 const {
-  createUser,
   getUser,
   getUsers,
   updateUser,
@@ -15,8 +14,7 @@ const {
   getMe,
 } = require('../controllers/users');
 
-userRouter.get('/me', getMe);
-userRouter.post('/users', createUser);
+userRouter.get('/users/me', getMe);
 userRouter.get('/users', getUsers);
 userRouter.get('/users/:userId', getUserValidity, getUser);
 userRouter.patch('/users/me', updateUserValidiry, updateUser);
