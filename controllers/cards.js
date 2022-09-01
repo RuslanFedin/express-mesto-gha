@@ -25,25 +25,23 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(() => {
-      throw new NotFound('Публикация не найдена');
+      throw new NotFound('Публикация не найдена.');
     })
     .then((card) => {
-      const ownerId = card.owner.toString();
-      const userId = req.user._id;
-
-      if (userId === ownerId) {
+      const owner = card.owner.toString();
+      if (req.user._id === owner) {
         Card.deleteOne(card)
           .then(() => {
             res.send({ card });
           })
           .catch(next);
       } else {
-        throw new Forbidden('Это не ваша пуликация, её удалить нельзя');
+        throw new Forbidden('то не ваша пуликация, её удалить нельзя');
       }
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new BadRequest('Данные некорректны'));
+        next(new BadRequest('Данные некорректны.'));
       } else {
         next(error);
       }
@@ -59,14 +57,10 @@ module.exports.likeCard = (req, res, next) => {
     .orFail(() => {
       throw new NotFound('Публикация не найдена');
     })
-    .then((card) => {
-      res.send({ card });
-    })
+    .then((card) => res.send({ card }))
     .catch((error) => {
-      if (error.name === 'NotFound') {
-        next(new NotFound('Пост не найден'));
-      } else if (error.name === 'CastError') {
-        next(new BadRequest('Данные некорректны'));
+      if (error.name === 'CastError') {
+        next(new BadRequest('Данные некорректны.'));
       } else {
         next(error);
       }
@@ -80,16 +74,12 @@ module.exports.dislikeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      throw new NotFound('Публикация не найдена');
+      throw new NotFound('Публикация не найдена.');
     })
-    .then((card) => {
-      res.send({ card });
-    })
+    .then((card) => res.send({ card }))
     .catch((error) => {
-      if (error.name === 'NotFound') {
-        next(new NotFound('Пост не найден'));
-      } else if (error.name === 'CastError') {
-        next(new BadRequest('Данные некорректны'));
+      if (error.name === 'CastError') {
+        next(new BadRequest('Данные некорректны.'));
       } else {
         next(error);
       }
