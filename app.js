@@ -8,7 +8,7 @@ const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const { handleError } = require('./middlewares/handleError');
 const { signInValidity, signUpValidity } = require('./middlewares/validity');
-const { NotFound } = require('./errors/NotFound');
+const NotFound = require('./errors/NotFound');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -22,14 +22,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.post('/signin', signInValidity, login);
 app.post('/signup', signUpValidity, createUser);
 
+app.use('*', (req, res, next) => {
+  next(new NotFound('Страница не найдена'));
+});
+
 app.use(auth);
 
 app.use('/', usersRouter);
 app.use('/', cardRouter);
-
-app.use('*', (req, res, next) => {
-  next(new NotFound('Страница не найдена'));
-});
 
 app.use(errors());
 app.use(handleError);
