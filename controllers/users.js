@@ -123,6 +123,7 @@ module.exports.createUser = (req, res, next) => {
           });
         })
         .catch((error) => {
+          console.log(error);
           if (error.code === 11000) {
             next(new Conflict('Пользователь уже существует'));
           } else if (error.name === 'ValidationError') {
