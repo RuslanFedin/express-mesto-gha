@@ -1,8 +1,8 @@
 const Card = require('../models/card');
-const { NotFound } = require('../errors/NotFound');
-const { Forbidden } = require('../errors/Forbidden');
-const { BadRequest } = require('../errors/BadRequest');
-const { HAS_BEEN_CREATED } = require('../errors/statusCodes');
+const NotFound = require('../errors/NotFound');
+const Forbidden = require('../errors/Forbidden');
+const BadRequest = require('../errors/BadRequest');
+const HAS_BEEN_CREATED = require('../errors/statusCodes');
 
 module.exports.getCards = (req, res, next) => Card.find({})
   .then((cards) => res.send({ cards }))
@@ -31,7 +31,7 @@ module.exports.deleteCard = (req, res, next) => {
       const ownerId = card.owner.toString();
       const userId = req.user._id;
 
-      if (userId !== ownerId) {
+      if (userId === ownerId) {
         Card.deleteOne(card)
           .then(() => {
             res.send({ card });

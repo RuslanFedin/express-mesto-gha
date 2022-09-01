@@ -22,7 +22,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.post('/signin', signInValidity, login);
 app.post('/signup', signUpValidity, createUser);
 
-app.use(auth);
+// app.use(auth);
 
 app.use('/', usersRouter);
 app.use('/', cardRouter);
