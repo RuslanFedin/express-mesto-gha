@@ -134,41 +134,6 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
-// module.exports.createUser = (req, res, next) => {
-//   const {
-//     email, password, name, about, avatar,
-//   } = req.body;
-//   User.findOne({ email })
-//     .then((user) => {
-//       if (user) {
-//         throw new Conflict('Такой пользователь уже существует!');
-//       }
-//     })
-//     .then(() => {
-//       bcrypt.hash(password, 10)
-//         .then((hash) => User.create({
-//           email,
-//           password: hash,
-//           name,
-//           about,
-//           avatar,
-//         }))
-//         .then((user) => res.send({
-//           name: user.name,
-//           about: user.about,
-//           avatar: user.avatar,
-//           email: user.email,
-//           _id: user._id,
-//         }));
-//     })
-//     .catch((error) => {
-//       if (error.name === 'ValidationError') {
-//         return next(new BadRequest('Введены некорректные данные'));
-//       }
-//       return next(error);
-//     });
-// };
-
 module.exports.getMe = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
