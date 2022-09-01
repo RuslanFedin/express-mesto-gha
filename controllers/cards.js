@@ -14,11 +14,11 @@ module.exports.createCard = (req, res, next) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ card }))
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
         next(new BadRequest('Данные некорректны. '));
       } else {
-        next(error);
+        next(err);
       }
     });
 };
@@ -37,14 +37,14 @@ module.exports.deleteCard = (req, res, next) => {
           })
           .catch(next);
       } else {
-        throw new Forbidden('Публикацию удалить невозможно');
+        throw new Forbidden('Невозможно удалить карточку');
       }
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
+    .catch((err) => {
+      if (err.name === 'CastError') {
         next(new BadRequest('Публикация не найдена.'));
       } else {
-        next(error);
+        next(err);
       }
     });
 };
@@ -56,14 +56,14 @@ module.exports.likeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      throw new NotFound('Публикация не найдена.');
+      throw new NotFound('Не верный _id публикации');
     })
     .then((card) => res.send({ card }))
-    .catch((error) => {
-      if (error.name === 'CastError') {
+    .catch((err) => {
+      if (err.name === 'CastError') {
         next(new BadRequest('Публикация не найдена.'));
       } else {
-        next(error);
+        next(err);
       }
     });
 };
@@ -75,14 +75,14 @@ module.exports.dislikeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      throw new NotFound('Переданы некорректные данные для снятия лайка.');
+      throw new NotFound('Некорректные данные.');
     })
     .then((card) => res.send({ card }))
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        next(new BadRequest('Карточка с указанным _id не найдена.'));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequest('Публикация не найдена.'));
       } else {
-        next(error);
+        next(err);
       }
     });
 };
