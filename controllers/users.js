@@ -7,7 +7,7 @@ const BadRequest = require('../errors/BadRequest');
 
 const JWT_KEY = 'super-duper-very-secret-key';
 
-// const { HAS_BEEN_CREATED } = require('../errors/statusCodes');
+const { HAS_BEEN_CREATED } = require('../errors/statusCodes');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -101,36 +101,73 @@ module.exports.createUser = (req, res, next) => {
   const {
     email, password, name, about, avatar,
   } = req.body;
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        throw new Conflict('Такой пользователь уже существует!');
-      }
-    })
-    .then(() => {
-      bcrypt.hash(password, 10)
-        .then((hash) => User.create({
-          email,
-          password: hash,
-          name,
-          about,
-          avatar,
-        }))
-        .then((user) => res.send({
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          email: user.email,
-          _id: user._id,
-        }));
-    })
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        return next(new BadRequest('Введены некорректные данные'));
-      }
-      return next(error);
+  if (!email || !password) {
+    throw new BadRequest('Введите логин и пароль');
+  }
+  bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({
+        email,
+        password: hash,
+        name,
+        about,
+        avatar,
+      })
+        .then((user) => {
+          res.status(HAS_BEEN_CREATED).send({
+            email: user.email,
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            _id: user._id,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.code === 11000) {
+            next(new Conflict('Пользователь уже существует'));
+          } else if (error.name === 'ValidationError') {
+            next(new BadRequest('Введены некорректные данные'));
+          }
+          next(error);
+        });
     });
 };
+
+// module.exports.createUser = (req, res, next) => {
+//   const {
+//     email, password, name, about, avatar,
+//   } = req.body;
+//   User.findOne({ email })
+//     .then((user) => {
+//       if (user) {
+//         throw new Conflict('Такой пользователь уже существует!');
+//       }
+//     })
+//     .then(() => {
+//       bcrypt.hash(password, 10)
+//         .then((hash) => User.create({
+//           email,
+//           password: hash,
+//           name,
+//           about,
+//           avatar,
+//         }))
+//         .then((user) => res.send({
+//           name: user.name,
+//           about: user.about,
+//           avatar: user.avatar,
+//           email: user.email,
+//           _id: user._id,
+//         }));
+//     })
+//     .catch((error) => {
+//       if (error.name === 'ValidationError') {
+//         return next(new BadRequest('Введены некорректные данные'));
+//       }
+//       return next(error);
+//     });
+// };
 
 module.exports.getMe = (req, res, next) => {
   const userId = req.user._id;
