@@ -32,9 +32,7 @@ module.exports.getUser = (req, res, next) => {
     })
     .then((user) => res.send({ user }))
     .catch((error) => {
-      if (error.name === 'NotFound') {
-        next(new NotFound('Пользователь не найден'));
-      } else if (error.name === 'CastError') {
+      if (error.name === 'CastError') {
         next(new BadRequest('Неверный запрос'));
       } else {
         next(error);
@@ -101,9 +99,6 @@ module.exports.createUser = (req, res, next) => {
   const {
     email, password, name, about, avatar,
   } = req.body;
-  if (!email || !password) {
-    throw new BadRequest('Введите логин и пароль');
-  }
   bcrypt.hash(password, 10)
     .then((hash) => {
       User.create({
@@ -123,7 +118,6 @@ module.exports.createUser = (req, res, next) => {
           });
         })
         .catch((error) => {
-          console.log(error);
           if (error.code === 11000) {
             next(new Conflict('Пользователь уже существует'));
           } else if (error.name === 'ValidationError') {

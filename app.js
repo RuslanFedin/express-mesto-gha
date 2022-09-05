@@ -24,8 +24,8 @@ app.post('/signup', signUpValidity, createUser);
 
 app.use(auth);
 
-app.use('/', usersRouter);
-app.use('/', cardRouter);
+app.use('/users', usersRouter);
+app.use('/cards', cardRouter);
 
 app.use('*', (req, res, next) => {
   next(new NotFound('Страница не найдена'));
